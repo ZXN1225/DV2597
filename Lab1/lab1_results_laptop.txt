@@ -1,0 +1,37 @@
+===== Gaussian (Task 10) Sequential and Parallel =====
+===== Gaussian Elimination Bench (Task 10) =====
+Host: Ubuntu24
+Date: Tue Nov 18 04:34:35 PM CET 2025
+CPU(s): 16
+GCC: gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+Matrix Size: 2048x2048
+Init: fast
+
+Sequential time (s): 0.76
+
+Threads, Time(s), Speedup_vs_seq, Speedup_vs_t1
+1, 0.780, 0.974, 1.000
+2, 0.480, 1.583, 1.625
+4, 0.300, 2.533, 2.600
+8, 0.310, 2.452, 2.516
+16, 0.440, 1.727, 1.773
+
+
+===== Quicksort (Task 11) – pthread version =====
+===== Parallel Quicksort Bench (Task 11) =====
+Host: Ubuntu24
+Date: Tue Nov 18 04:34:38 PM CET 2025
+CPU(s): 16
+GCC: gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+Problem Size: 64 * 2^20 items
+
+Sequential time (s): 6.37
+
+Threads, Time(s), Speedup_vs_seq, Speedup_vs_t1
+1, 5.770, 1.104, 1.000
+2, 3.870, 1.646, 1.491
+4, 2.920, 2.182, 1.976
+8, 1.720, 3.703, 3.355
+16, 1.350, 4.719, 4.274
+
+

@@ -1,0 +1,47 @@
+# Makefile.local - For Local Laptop GPUs
+# Supports: GTX 1050-1080, GTX 1650-1660, RTX 2000/3000/4000 series
+#
+# Usage: make -f Makefile.local
+
+CC = gcc
+NVCC = nvcc
+
+CFLAGS = -O2 -I.
+
+# Multiple GPU architectures for compatibility:
+# 61 = GTX 1050, 1060, 1070, 1080
+# 75 = GTX 1650, 1660, RTX 2060, 2070, 2080, T4
+# 86 = RTX 3060, 3070, 3080, 3090
+# 89 = RTX 4060, 4070, 4080, 4090
+NVCCFLAGS = -O2 -I. \
+    -gencode arch=compute_61,code=sm_61 \
+    -gencode arch=compute_75,code=sm_75 \
+    -gencode arch=compute_86,code=sm_86 \
+    -gencode arch=compute_89,code=sm_89
+
+LDFLAGS = -L/usr/local/cuda/lib64 -lcudart -lm -lstdc++
+
+all: lenet_cpu lenet_gpu
+
+lenet_cpu: main_cpu.o lenet.o
+	$(CC) main_cpu.o lenet.o -o lenet_cpu -lm
+
+lenet_gpu: main_gpu.o lenet.o lenet_cuda.o
+	$(CC) main_gpu.o lenet.o lenet_cuda.o -o lenet_gpu $(LDFLAGS)
+
+main_cpu.o: main_cpu.c lenet.h
+	$(CC) $(CFLAGS) -c main_cpu.c -o main_cpu.o
+
+main_gpu.o: main_gpu.c lenet.h
+	$(CC) $(CFLAGS) -c main_gpu.c -o main_gpu.o
+
+lenet.o: lenet.c lenet.h
+	$(CC) $(CFLAGS) -c lenet.c -o lenet.o
+
+lenet_cuda.o: lenet_cuda.cu lenet.h
+	$(NVCC) $(NVCCFLAGS) -c lenet_cuda.cu -o lenet_cuda.o
+
+clean:
+	rm -f *.o lenet_cpu lenet_gpu
+
+.PHONY: all clean
