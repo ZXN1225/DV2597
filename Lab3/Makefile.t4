@@ -1,0 +1,35 @@
+# Makefile for Google Colab T4 GPU (compute capability 7.5)
+# Usage: make -f Makefile.t4
+
+CC = gcc
+NVCC = nvcc
+
+CFLAGS = -O2 -I.
+NVCCFLAGS = -O2 -I. -gencode arch=compute_75,code=sm_75
+
+LDFLAGS = -L/usr/local/cuda/lib64 -lcudart -lm -lstdc++
+
+all: lenet_cpu lenet_gpu
+
+lenet_cpu: main_cpu.o lenet.o
+	$(CC) main_cpu.o lenet.o -o lenet_cpu -lm
+
+lenet_gpu: main_gpu.o lenet.o lenet_cuda.o
+	$(CC) main_gpu.o lenet.o lenet_cuda.o -o lenet_gpu $(LDFLAGS)
+
+main_cpu.o: main_cpu.c lenet.h
+	$(CC) $(CFLAGS) -c main_cpu.c -o main_cpu.o
+
+main_gpu.o: main_gpu.c lenet.h
+	$(CC) $(CFLAGS) -c main_gpu.c -o main_gpu.o
+
+lenet.o: lenet.c lenet.h
+	$(CC) $(CFLAGS) -c lenet.c -o lenet.o
+
+lenet_cuda.o: lenet_cuda.cu lenet.h
+	$(NVCC) $(NVCCFLAGS) -c lenet_cuda.cu -o lenet_cuda.o
+
+clean:
+	rm -f *.o lenet_cpu lenet_gpu
+
+.PHONY: all clean
